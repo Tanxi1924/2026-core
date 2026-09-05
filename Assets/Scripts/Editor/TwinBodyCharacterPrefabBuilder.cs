@@ -74,6 +74,7 @@ public static class TwinBodyCharacterPrefabBuilder
         // 找到刚体节点，不需要额外接线。
         root.AddComponent<TwinBodyGun>();
         root.AddComponent<TwinBodyTongue>();
+        root.AddComponent<TwinBodyDropThrough>();
 
         PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
         Object.DestroyImmediate(root);
@@ -114,3 +115,4 @@ public static class TwinBodyCharacterPrefabBuilder
     }
 }
 #endif
+
