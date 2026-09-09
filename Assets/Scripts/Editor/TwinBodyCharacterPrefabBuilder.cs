@@ -16,6 +16,7 @@ public static class TwinBodyCharacterPrefabBuilder
 {
     private const string PrefabFolder = "Assets/Prefabs/Character";
     private const string PrefabPath = PrefabFolder + "/TwinBodyCharacter.prefab";
+    private const string JohnGunWeaponPath = "Assets/Prefabs/GunTemp.prefab";
 
     [MenuItem("Tools/Character/Build TwinBody Character Prefab")]
     public static void Build()
@@ -70,6 +71,14 @@ public static class TwinBodyCharacterPrefabBuilder
         twinBody.SyncPhysics();
         twinBody.ApplyLayout();
 
+        // 约翰的枪：开火本身用 Corgi 官方的 CharacterHandleWeapon + GunTemp.prefab
+        // （ProjectileWeapon + WeaponAim，左键朝鼠标开火由场景里 PlayerID=Player1 的
+        // InputManager 驱动），武器挂点设为 John 节点。TwinBodyGun 只补官方系统覆盖不到的
+        // 两件事：后坐力打在 JohnNode 的刚体上、弹匣闲置自动回复 / 舌头吃东西回复。
+        var handleWeapon = root.AddComponent<CharacterHandleWeapon>();
+        handleWeapon.WeaponAttachment = john.transform;
+        handleWeapon.InitialWeapon = LoadJohnGunWeapon();
+
         // 两个头的功能：约翰的枪（左键）+ 珍妮佛的舌头（右键），都通过 GetComponent<TwinBodyCharacter>()
         // 找到刚体节点，不需要额外接线。
         root.AddComponent<TwinBodyGun>();
@@ -101,6 +110,16 @@ public static class TwinBodyCharacterPrefabBuilder
         col.radius = 0.5f; // 局部半径固定为 0.5，实际世界半径由 TwinBodyCharacter.ApplyLayout 通过 localScale 控制
 
         return go;
+    }
+
+    private static Weapon LoadJohnGunWeapon()
+    {
+        var weaponPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(JohnGunWeaponPath);
+        var weapon = weaponPrefab != null ? weaponPrefab.GetComponent<Weapon>() : null;
+        if (weapon == null)
+            Debug.LogWarning($"[TwinBodyCharacterPrefabBuilder] 未找到 {JohnGunWeaponPath} 或它没有 Weapon 组件，" +
+                              "CharacterHandleWeapon.InitialWeapon 需要在 Inspector 中手动指定。");
+        return weapon;
     }
 
     private static void EnsureDir(string path)

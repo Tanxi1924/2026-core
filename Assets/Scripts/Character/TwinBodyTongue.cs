@@ -4,18 +4,18 @@ using UnityEngine;
 namespace TwinBody
 {
     /// <summary>
-    /// 珍妮佛的舌头 Ability（文档 5. 珍妮佛-舌头系统）。右键朝鼠标方向伸出舌头：
+    /// 珍妮佛的舌头 Ability（文档 5. 珍妮佛-舌头系统）。右键单点（不需要按住）朝鼠标方向发一条射线：
     /// 打中 TongueCapturable → 把目标拉到嘴边吃掉（回复约翰弹匣，见 TwinBodyGun.RestoreAmmo）；
-    /// 打中 TonguePullAnchor → 对珍妮佛节点持续施加拉力（TwinBodyCharacter.ApplyForceAtNode），
-    /// 配合重力和已有速度可以做出摆荡的效果。
+    /// 打中其他任何实体碰撞体（地形、墙壁……）→ 对整个刚体（TwinBodyCharacter.Body）在珍妮佛节点上
+    /// 施加一次朝命中点方向的冲量，牵引一下，没有后续持续效果，松不松右键都无所谓。
     /// </summary>
     [RequireComponent(typeof(TwinBodyCharacter))]
     [AddComponentMenu("Corgi Engine/Character/Abilities/Twin Body Tongue (Custom)")]
     public class TwinBodyTongue : CharacterAbility
     {
         public override string HelpBoxText() =>
-            "珍妮佛的舌头：右键朝鼠标方向伸出。打中 TongueCapturable 会把目标拉过来吃掉（回复约翰弹匣）；" +
-            "打中 TonguePullAnchor 会对珍妮佛节点持续施加拉力，松开右键或够到目标后停止。";
+            "珍妮佛的舌头：右键点一下（不用按住）朝鼠标方向发射线。打中 TongueCapturable 会把目标拉过来吃掉" +
+            "（回复约翰弹匣）；打中其他任何东西（地形、墙壁等）会朝命中点牵引一次性的冲量，没有持续效果。";
 
         [Header("输入")]
         public bool ReadInput = true;
@@ -30,22 +30,19 @@ namespace TwinBody
         [Min(1)] public int AmmoRestoreOnEat = 2;
 
         [Header("牵引（由策划调节）")]
-        [Min(0f)] public float PullForce = 25f;
+        [Tooltip("打中非可食用物体时，朝命中点方向给整体刚体的一次性冲量大小")]
+        [Min(0f)] public float PullImpulse = 6f;
 
         protected TwinBodyCharacter _body;
         protected TwinBodyGun _gun;
 
         protected bool _tongueFirePressed;
-        protected bool _tongueReleased;
 
         protected Transform _capturedTarget;
         protected Collider2D _capturedCollider;
         protected Rigidbody2D _capturedRigidbody;
 
-        protected Transform _pullAnchor;
-
         public bool IsReeling => _capturedTarget != null;
-        public bool IsPulling => _pullAnchor != null;
 
         protected override void Initialization()
         {
@@ -63,18 +60,12 @@ namespace TwinBody
         public override void EarlyProcessAbility()
         {
             _tongueFirePressed = ReadInput && Input.GetMouseButtonDown(1);
-            _tongueReleased = Input.GetMouseButtonUp(1);
         }
 
         public override void ProcessAbility()
         {
             base.ProcessAbility();
             if (!AbilityAuthorized || _body == null) return;
-
-            if (_tongueReleased)
-            {
-                _pullAnchor = null;
-            }
 
             if (_tongueFirePressed && !IsReeling)
             {
@@ -84,11 +75,6 @@ namespace TwinBody
             if (IsReeling)
             {
                 UpdateReel();
-            }
-
-            if (IsPulling)
-            {
-                UpdatePull();
             }
         }
 
@@ -111,11 +97,10 @@ namespace TwinBody
                 return;
             }
 
-            TonguePullAnchor anchor = hit.collider.GetComponentInParent<TonguePullAnchor>();
-            if (anchor != null)
-            {
-                _pullAnchor = anchor.transform;
-            }
+            // 打中除了"可吃的东西"之外的任何实体碰撞体（地形、墙壁……）都给一次朝命中点的冲量，
+            // 不需要按住右键、也没有后续持续效果。
+            _body.ApplyForceAtNode(_body.JenniferNode, direction * PullImpulse, ForceMode2D.Impulse);
+            PlayAbilityStartFeedbacks();
         }
 
         protected virtual void StartReel(TongueCapturable capturable)
@@ -159,15 +144,6 @@ namespace TwinBody
             _capturedRigidbody = null;
 
             PlayAbilityStopFeedbacks();
-        }
-
-        protected virtual void UpdatePull()
-        {
-            Vector2 origin = _body.JenniferNode.position;
-            Vector2 direction = ((Vector2)_pullAnchor.position - origin).normalized;
-            _body.ApplyForceAtNode(_body.JenniferNode, direction * PullForce, ForceMode2D.Force);
-
-            Debug.DrawLine(origin, _pullAnchor.position, Color.cyan);
         }
 
         protected virtual Vector3 GetMouseWorldPosition()

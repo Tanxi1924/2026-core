@@ -28,7 +28,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 2, y: 0.3, z: 1}
+  m_LocalScale: {x: 1.5, y: 0.3, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4490083686171717866}
@@ -164,7 +164,7 @@ Transform:
   m_GameObject: {fileID: 4744330703608924715}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1, y: 0, z: 0}
+  m_LocalPosition: {x: -0.75, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -278,6 +278,7 @@ GameObject:
   - component: {fileID: 633538212513298050}
   - component: {fileID: 9029452589856275685}
   - component: {fileID: 3007405671794740155}
+  - component: {fileID: 7654321987654321}
   - component: {fileID: 25939101066834544}
   - component: {fileID: 3478285726067419000}
   m_Layer: 9
@@ -547,11 +548,47 @@ MonoBehaviour:
   LinearDamping: 0
   AngularDamping: 0.5
   NodeRadius: 0.5
-  NodeDistance: 2
+  NodeDistance: 1.5
   ConnectorThickness: 0.3
   ReadInput: 1
   MoveSpeed: 6
   MoveAcceleration: 20
+--- !u!114 &7654321987654321
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7312212643959337073}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6a07c6668aa55403790d27b575279549, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: MoreMountains.CorgiEngine::MoreMountains.CorgiEngine.CharacterHandleWeapon
+  AbilityStartFeedbacks: {fileID: 0}
+  AbilityStopFeedbacks: {fileID: 0}
+  AbilityPermitted: 1
+  BlockingMovementStates: 
+  BlockingConditionStates: 
+  BlockingWeaponStates: 
+  InitialWeapon: {fileID: 114000010078180980, guid: 9ccb135a0b092eb4fa497359d960476f,
+    type: 3}
+  CanPickupWeapons: 1
+  WeaponAttachment: {fileID: 5936969999299953348}
+  ForceWeaponScaleResetOnEquip: 0
+  ForceWeaponRotationResetOnEquip: 0
+  AutomaticallyBindAnimator: 1
+  AmmoDisplayID: 0
+  ContinuousPress: 0
+  GettingHitInterruptsAttack: 0
+  CanShootFromLadders: 0
+  FaceWeaponDirection: 0
+  InvertHorizontalAimWhenWallclinging: 0
+  ForceAlwaysShoot: 0
+  BufferInput: 0
+  NewInputExtendsBuffer: 0
+  MaximumBufferDuration: 0.25
+  CurrentWeapon: {fileID: 0}
 --- !u!114 &25939101066834544
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -570,17 +607,8 @@ MonoBehaviour:
   BlockingMovementStates: 
   BlockingConditionStates: 
   BlockingWeaponStates: 
-  ReadInput: 1
-  Range: 20
-  Damage: 10
-  HitMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  MagazineCapacity: 6
-  CurrentAmmo: 0
-  FireCooldown: 0.25
-  AmmoRegenInterval: 1.5
-  RecoilForce: 4
+  AmmoRegenInterval: 1
+  RecoilForce: 10
 --- !u!114 &3478285726067419000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -600,14 +628,14 @@ MonoBehaviour:
   BlockingConditionStates: 
   BlockingWeaponStates: 
   ReadInput: 1
-  TongueLength: 8
+  TongueLength: 12
   HitMask:
     serializedVersion: 2
     m_Bits: 4294967295
-  ReelSpeed: 12
+  ReelSpeed: 16
   EatDistance: 0.3
   AmmoRestoreOnEat: 2
-  PullForce: 25
+  PullImpulse: 16
 --- !u!1 &8417357222975867105
 GameObject:
   m_ObjectHideFlags: 0
@@ -635,7 +663,7 @@ Transform:
   m_GameObject: {fileID: 8417357222975867105}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1, y: 0, z: 0}
+  m_LocalPosition: {x: 0.75, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
