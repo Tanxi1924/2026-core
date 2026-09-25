@@ -314,8 +314,7 @@ namespace MoreMountains.CorgiEngine
 			_colliderHealth = collider.gameObject.MMGetComponentNoAlloc<Health>();
 
 			OnHit?.Invoke();
-			Debug.Log("刺集中了");
-						
+			
 			// if what we're colliding with is damageable
 			if ((_colliderHealth != null) && (_colliderHealth.enabled))
 			{

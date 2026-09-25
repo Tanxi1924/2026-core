@@ -3,8 +3,20 @@ using System;
 using UnityEditor;
 using UnityEngine;
 
-namespace TwinBody.Barrage.Editor
-{
+
+    [CustomEditor(typeof(MatrixBarrageWeapon))]
+    public class MatrixBarrageWeaponEditor : UnityEditor.Editor
+    {
+        public override void OnInspectorGUI()
+        {
+            serializedObject.Update();
+            EditorGUILayout.HelpBox("一次 WeaponUse 发射完整矩阵。节奏使用 Time Between Uses；子弹和伤害来自 Object Pooler。方向角使用世界坐标，90 度向上。", MessageType.Info);
+            DrawPropertiesExcluding(serializedObject, "m_Script", "ProjectilesPerShot", "Spread",
+                "RandomSpread", "RotateWeaponOnSpread", "ProjectileSpawnTransform", "ProjectileSpawnOffset", "SpawnPosition");
+            if (serializedObject.ApplyModifiedProperties()) SceneView.RepaintAll();
+        }
+    }
+
     [CustomEditor(typeof(MatrixBarragePattern))]
     public class MatrixBarragePatternEditor : UnityEditor.Editor
     {
@@ -13,7 +25,7 @@ namespace TwinBody.Barrage.Editor
         {
             var pattern = (MatrixBarragePattern)target;
             serializedObject.Update();
-            EditorGUILayout.HelpBox("点击格子设置子弹。顶行对应 +Y，图案以整个网格中心为原点。此资源可由多个武器共用。", MessageType.Info);
+            EditorGUILayout.HelpBox("点击格子设置子弹。顶行对应 +Y，图案以整个网格中心为原点。", MessageType.Info);
             EditorGUI.BeginChangeCheck();
             int rows = EditorGUILayout.IntSlider("行数 Rows", pattern.Rows, 1, 25);
             int columns = EditorGUILayout.IntSlider("列数 Columns", pattern.Columns, 1, 25);
@@ -43,7 +55,7 @@ namespace TwinBody.Barrage.Editor
                 if (GUILayout.Button("上下镜像")) Edit(pattern, "Mirror matrix", () => pattern.Mirror(false));
             }
             if (pattern.Rows % 2 == 0 || pattern.Columns % 2 == 0)
-                EditorGUILayout.HelpBox("对称尖顶菱形推荐奇数行列，例如 5×5 或 7×7；偶数尺寸按网格中心对称采样。", MessageType.Info);
+                EditorGUILayout.HelpBox("对称尖顶菱形推荐奇数行列；偶数尺寸按网格中心对称采样。", MessageType.Info);
             int count = 0;
             _scroll = EditorGUILayout.BeginScrollView(_scroll, GUILayout.MaxHeight(600));
             for (int r = 0; r < pattern.Rows; r++)
@@ -67,7 +79,7 @@ namespace TwinBody.Barrage.Editor
             }
             EditorGUILayout.EndScrollView();
             EditorGUILayout.LabelField("当前子弹数量", count.ToString());
-            if (count == 0) EditorGUILayout.HelpBox("空矩阵不会生成子弹。先点击预设或格子。", MessageType.Warning);
+            if (count == 0) EditorGUILayout.HelpBox("空矩阵不会生成子弹。", MessageType.Warning);
         }
 
         private void PresetButton(MatrixBarragePattern pattern, string label, MatrixBarragePattern.Preset preset)
@@ -92,5 +104,5 @@ namespace TwinBody.Barrage.Editor
             ProjectWindowUtil.CreateAsset(pattern, "Diamond5x5.asset");
         }
     }
-}
+
 #endif

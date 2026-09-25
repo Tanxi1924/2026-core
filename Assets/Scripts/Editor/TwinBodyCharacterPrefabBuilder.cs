@@ -84,6 +84,12 @@ public static class TwinBodyCharacterPrefabBuilder
         root.AddComponent<TwinBodyGun>();
         root.AddComponent<TwinBodyTongue>();
 
+        // 屏幕右上角显示两个头各自的血量，纯展示，运行时自己搭 Canvas。
+        root.AddComponent<TwinBodyHealthHUD>();
+
+        // 一个头没血了、另一个头还有血 → 没血的头自动回复到 1 点血就停止。
+        root.AddComponent<TwinBodyHeadRegen>();
+
         PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
         Object.DestroyImmediate(root);
 
@@ -108,6 +114,18 @@ public static class TwinBodyCharacterPrefabBuilder
 
         var col = go.AddComponent<CircleCollider2D>();
         col.radius = 0.5f; // 局部半径固定为 0.5，实际世界半径由 TwinBodyCharacter.ApplyLayout 通过 localScale 控制
+
+        // 两个头各自独立的血量：Corgi 的 DamageOnTouch 按"被命中碰撞体所在 GameObject 上的 Health"
+        // 来判定伤害目标，Jennifer/John 各自是独立的子物体，所以这里各挂一个独立 Health，互不影响。
+        // DestroyOnDeath / CollisionsOffOnDeath 都关掉：这两个节点没有 CorgiController，
+        // Health.Kill() 里所有依赖 CorgiController 的死亡表现都会被安全跳过，但 DestroyOnDeath 是
+        // 直接 Destroy 这个节点本身，会破坏共用的复合 Rigidbody2D 结构，必须手动关闭。
+        var health = go.AddComponent<Health>();
+        health.InitialHealth = 100f;
+        health.MaximumHealth = 100f;
+        health.DestroyOnDeath = false;
+        health.CollisionsOffOnDeath = false;
+        health.ApplyDeathForce = false;
 
         return go;
     }

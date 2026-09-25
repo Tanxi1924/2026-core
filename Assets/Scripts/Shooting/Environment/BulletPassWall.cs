@@ -9,15 +9,15 @@ namespace TwinBody.Environment
     public sealed class BulletPassWall : MonoBehaviour
     {
         [Header("子弹通行开关")]
-        [SerializeField, InspectorName("允许 Twin 子弹通过")]
-        private bool allowTwinBullets = true;
+        [SerializeField, InspectorName("允许主角子弹通过")]
+        private bool allowHeroBullets = true;
         [SerializeField, InspectorName("允许敌人子弹通过")]
         private bool allowEnemyBullets;
 
         [Header("子弹所在 Layer")]
-        [ InspectorName("Twin 子弹层")]
+        [ SerializeField,InspectorName("主角子弹层")]
         private LayerMask twinBulletLayers = 1 << 16;
-        [ InspectorName("敌人子弹层")]
+        [SerializeField, InspectorName("敌人子弹层")]
         private LayerMask enemyBulletLayers = 1 << 12;
 
         //碰撞过滤
@@ -27,7 +27,7 @@ namespace TwinBody.Environment
         private int[] originalExclusions;
         private int[] originalPriorities;
 
-        public bool AllowTwinBullets => allowTwinBullets;
+        public bool AllowTwinBullets => allowHeroBullets;
         public bool AllowEnemyBullets => allowEnemyBullets;
 
         private void Reset()
@@ -56,7 +56,7 @@ namespace TwinBody.Environment
 
         public void SetTwinBulletsPass(bool value)
         {
-            allowTwinBullets = value;
+            allowHeroBullets = value;
             ApplySettings();
         }
 
@@ -66,13 +66,13 @@ namespace TwinBody.Environment
             ApplySettings();
         }
 
-        public void ToggleTwinBulletsPass() => SetTwinBulletsPass(!allowTwinBullets);
+        public void ToggleTwinBulletsPass() => SetTwinBulletsPass(!allowHeroBullets);
         public void ToggleEnemyBulletsPass() => SetEnemyBulletsPass(!allowEnemyBullets);
 
         public void ApplySettings()
         {
             if (!isActiveAndEnabled || wallColliders == null) return;
-            int exclusions = (allowTwinBullets ? twinBulletLayers.value : 0)
+            int exclusions = (allowHeroBullets ? twinBulletLayers.value : 0)
                            | (allowEnemyBullets ? enemyBulletLayers.value : 0);
             for (int i = 0; i < wallColliders.Length; i++)
             {

@@ -5,6 +5,10 @@ using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine.UIElements;
 
+namespace Twin.Weaoin.MatrixBarrage.Editor
+{
+    
+
     [CustomEditor(typeof(MatrixBarrageWeapon))]
     [CanEditMultipleObjects]
     public class MatrixBarrageWeaponEditor : WeaponEditor
@@ -68,5 +72,5 @@ using UnityEngine.UIElements;
             return root;
         }
     }
-
+}
 #endif

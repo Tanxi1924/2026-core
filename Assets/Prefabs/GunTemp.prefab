@@ -4824,7 +4824,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0514d297deadac74fb15a7b7326ff0d2, type: 3}
   m_Name: 
-  m_EditorClassIdentifier:
+  m_EditorClassIdentifier: 
   AimControl: 3
   RotationMode: 0
   WeaponRotationSpeed: 0
@@ -4866,7 +4866,7 @@ MonoBehaviour:
   BurstLength: 3
   BurstTimeBetweenShots: 0.1
   MagazineBased: 1
-  MagazineSize: 20
+  MagazineSize: 500
   AutoReload: 0
   ReloadTime: 2
   AmmoConsumedPerShot: 1

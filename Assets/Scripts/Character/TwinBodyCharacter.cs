@@ -54,6 +54,12 @@ namespace TwinBody
         [Min(0f)] public float MoveSpeed = 6f;
         [Min(0f)] public float MoveAcceleration = 20f;
 
+        [Header("鼠标瞄准（由策划调节）")]
+        [Tooltip("开局时把系统鼠标限制在游戏窗口内（CursorLockMode.Confined）：一旦鼠标真的移出窗口，" +
+                 "Windows 就不会把点击/移动事件发给游戏了，导致开枪/舌头看起来毫无反应。限制在窗口内后鼠标出不去，" +
+                 "瞄准和左右键输入就不会再因为鼠标出界而失效。")]
+        public bool ConfineCursorToGameWindow = true;
+
         public Rigidbody2D Body { get; private set; }
 
         /// <summary>Start() 由基类调用（Unity 生命周期），这里补上 Rigidbody2D 引用并做一次初始同步/摆位。</summary>
@@ -61,8 +67,21 @@ namespace TwinBody
         {
             base.Initialization();
             Body = GetComponent<Rigidbody2D>();
+            if (ConfineCursorToGameWindow)
+            {
+                Cursor.lockState = CursorLockMode.Confined;
+            }
             SyncPhysics();
             ApplyLayout();
+        }
+
+        /// <summary>角色销毁时把鼠标限制解除，避免退出关卡/角色死亡后鼠标还被关在窗口里。</summary>
+        private void OnDestroy()
+        {
+            if (ConfineCursorToGameWindow)
+            {
+                Cursor.lockState = CursorLockMode.None;
+            }
         }
 
         /// <summary>Inspector 中任意字段被修改后自动调用：把物理参数写回 Rigidbody2D，并重新摆放节点/连接件。</summary>
