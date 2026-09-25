@@ -83,6 +83,7 @@ public static class TwinBodyCharacterPrefabBuilder
         // 找到刚体节点，不需要额外接线。
         root.AddComponent<TwinBodyGun>();
         root.AddComponent<TwinBodyTongue>();
+        root.AddComponent<TwinBodyDropThrough>();
 
         // 屏幕右上角显示两个头各自的血量，纯展示，运行时自己搭 Canvas。
         root.AddComponent<TwinBodyHealthHUD>();
@@ -151,3 +152,4 @@ public static class TwinBodyCharacterPrefabBuilder
     }
 }
 #endif
+
